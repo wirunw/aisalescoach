@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Sales Coach: ผู้ช่วยสร้าง Prompt สำหรับผู้แทนยา</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label, .fieldset-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 0.5rem;
+            background-color: #FFFFFF;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            color: #FFFFFF;
+            background-color: #2563EB;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: none;
+            width: 100%;
+        }
+        .btn:hover {
+            background-color: #1D4ED8;
+        }
+        .btn-secondary {
+            background-color: #6B7280;
+        }
+        .btn-secondary:hover {
+            background-color: #4B5563;
+        }
+        #result-container {
+            margin-top: 2rem;
+            background-color: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+        .hidden {
+            display: none;
+        }
+        .section-header {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1E40AF;
+            border-bottom: 2px solid #DBEAFE;
+            padding-bottom: 0.5rem;
+        }
+        .checkbox-group {
+            background-color: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        .checkbox-item input[type="checkbox"] {
+            height: 1rem;
+            width: 1rem;
+            margin-right: 0.75rem;
+            accent-color: #2563EB;
+        }
+        .checkbox-item label {
+            color: #374151;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto max-w-4xl p-4 sm:p-6 md:p-8">
+        <header class="text-center mb-8">
+            <img src="https://i.postimg.cc/dDfBQVWf/wirun-facbook.png" alt="Logo ภก.วิรุณ เวชศิริ" class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-white shadow-lg">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">AI Sales Coach</h1>
+            <p class="mt-2 text-lg text-gray-600">ผู้ช่วยสร้าง Prompt อัจฉริยะสำหรับผู้แทนยา</p>
+        </header>
+
+        <!-- How to use section -->
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 sm:p-8 mb-8">
+            <h2 class="text-2xl font-bold text-blue-800 text-center mb-4">เริ่มต้นใช้งานใน 3 ขั้นตอนง่ายๆ</h2>
+            <p class="text-center text-gray-600 mb-8">
+                เครื่องมือนี้ถูกออกแบบมาเพื่อช่วยให้ผู้แทนยาสร้าง Prompt ที่ทรงพลังและเฉพาะเจาะจงสำหรับสถานการณ์ต่างๆ ได้อย่างรวดเร็ว เพื่อนำไปใช้กับ AI (เช่น ChatGPT, Gemini) และรับคำแนะนำที่นำไปปฏิบัติได้จริง
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <!-- Step 1 -->
+                <div class="flex flex-col items-center">
+                    <div class="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mb-3 shadow">1</div>
+                    <h3 class="font-semibold text-lg text-gray-800 mb-2">ระบุข้อมูลเฉพาะตัว</h3>
+                    <p class="text-gray-600 text-sm">ใส่ข้อมูลของคุณ, ชื่อยา, และกลุ่มแพทย์เป้าหมาย เพื่อให้ AI เข้าใจบริบทของคุณ</p>
+                </div>
+                <!-- Step 2 -->
+                <div class="flex flex-col items-center">
+                     <div class="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mb-3 shadow">2</div>
+                    <h3 class="font-semibold text-lg text-gray-800 mb-2">เลือกสถานการณ์</h3>
+                    <p class="text-gray-600 text-sm">เลือกวัตถุประสงค์, ความท้าทาย และผลลัพธ์ที่คาดหวังจากรายการที่เตรียมไว้ให้</p>
+                </div>
+                <!-- Step 3 -->
+                <div class="flex flex-col items-center">
+                     <div class="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mb-3 shadow">3</div>
+                    <h3 class="font-semibold text-lg text-gray-800 mb-2">สร้างและคัดลอก Prompt</h3>
+                    <p class="text-gray-600 text-sm">กดปุ่มสร้าง Prompt แล้วนำข้อความที่ได้ไปใช้งานกับ AI ของคุณได้ทันที!</p>
+                </div>
+            </div>
+        </div>
+
+        <main class="bg-white p-6 sm:p-8 rounded-xl shadow-lg">
+            <!-- Step 1: Personalization Section -->
+            <div id="personalization-section">
+                <h3 class="section-header">1. ระบุข้อมูลเฉพาะตัว</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="form-group">
+                        <label for="user-name">ชื่อของคุณ:</label>
+                        <input type="text" id="user-name" class="form-control" placeholder="เช่น สมชาย">
+                    </div>
+                    <div class="form-group">
+                        <label for="drug-name">ชื่อยาของคุณ:</label>
+                        <input type="text" id="drug-name" class="form-control" placeholder="เช่น Paracetamol">
+                    </div>
+                    <div class="form-group">
+                        <label for="doctor-specialty">กลุ่มแพทย์เป้าหมาย (Specialty):</label>
+                        <select id="doctor-specialty" class="form-control">
+                            <option value="แพทย์ทั่วไป">แพทย์ทั่วไป (GP)</option>
+                            <option value="อายุรแพทย์">อายุรแพทย์ (Internal Medicine)</option>
+                            <option value="แพทย์หัวใจ">แพทย์โรคหัวใจ (Cardiologist)</option>
+                            <option value="แพทย์ผิวหนัง">แพทย์ผิวหนัง (Dermatologist)</option>
+                            <option value="กุมารแพทย์">กุมารแพทย์ (Pediatrician)</option>
+                            <option value="สูตินรีแพทย์">สูตินรีแพทย์ (OB-GYN)</option>
+                            <option value="ศัลยแพทย์">ศัลยแพทย์ (Surgeon)</option>
+                            <option value="other_specialty">อื่นๆ (ระบุเอง)</option>
+                        </select>
+                         <input type="text" id="doctor-specialty-other" class="form-control mt-2 hidden" placeholder="ระบุสาขาแพทย์...">
+                    </div>
+                    <div class="form-group">
+                        <label for="competitor-drug">ยาของคู่แข่ง (ถ้ามี):</label>
+                        <input type="text" id="competitor-drug" class="form-control" placeholder="เช่น Ibuprofen">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Select Scenario Category -->
+            <div class="form-group">
+                <label for="scenario-select">2. เลือกสถานการณ์หลักที่คุณกำลังเผชิญ:</label>
+                <select id="scenario-select" class="form-control">
+                    <option value="">-- กรุณาเลือกสถานการณ์ --</option>
+                    <optgroup label="การขายและการตลาด">
+                        <option value="planning">การวางแผนเขตการขายและการจัดการลูกค้าก่อนเข้าพบ</option>
+                        <option value="engagement">การนำเสนอข้อมูลผลิตภัณฑ์และการจัดการข้อโต้แย้ง</option>
+                        <option value="ptc">การบริหารจัดการกระบวนการนำยาเข้าบัญชี รพ. (PTC)</option>
+                    </optgroup>
+                    <optgroup label="งานเอกสารและธุรการ">
+                        <option value="quotation">การจัดทำใบเสนอราคา (Quotation)</option>
+                        <option value="formulary_letter">การเขียนจดหมายเสนอยาเข้าโรงพยาบาล</option>
+                        <option value="expense_report">การสรุปและเบิกค่าใช้จ่าย (Expense Report)</option>
+                    </optgroup>
+                     <optgroup label="การวิเคราะห์และรายงานผล">
+                        <option value="reporting">การบันทึกข้อมูลและรายงานหลังการเข้าพบ</option>
+                        <option value="dashboard_design">การออกแบบ Dashboard เพื่อติดตามผลงาน</option>
+                        <option value="sfe">การวัดผลและพัฒนาประสิทธิภาพของทีมขาย (มุมมองผู้จัดการ)</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <!-- Dynamic content will be injected here -->
+            <div id="dynamic-choices-container" class="hidden space-y-6">
+                <div id="objectives-container"></div>
+                <div id="challenges-container"></div>
+                <div id="solutions-container"></div>
+            </div>
+
+            <!-- Request Section -->
+            <div class="form-group mt-8">
+                <label for="additional-info">ระบุคำขอเพิ่มเติมที่ต้องการจาก AI:</label>
+                <textarea id="additional-info" class="form-control" placeholder="เช่น 'ช่วยร่างสคริปต์เปิดการสนทนา 3 แบบ', 'เปรียบเทียบยากับคู่แข่งในรูปแบบตาราง'"></textarea>
+            </div>
+
+            <!-- Generate Button -->
+            <button id="generate-btn" class="btn hidden mt-4">สร้าง Personalized Prompt</button>
+
+            <!-- Result -->
+            <div id="result-container" class="hidden">
+                <h2 class="text-2xl font-semibold text-gray-900 mb-4">Prompt ที่สร้างขึ้นสำหรับคุณ:</h2>
+                <textarea id="result-prompt" readonly class="form-control w-full h-96 bg-gray-100 resize-none"></textarea>
+                <button id="copy-btn" class="btn btn-secondary mt-4 w-auto">
+                    คัดลอก Prompt
+                </button>
+                <span id="copy-feedback" class="ml-4 text-green-600 font-medium"></span>
+            </div>
+        </main>
+    </div>
+
+    <footer class="text-center py-6 mt-8">
+        <p class="text-sm text-gray-500">
+            ออกแบบโดย เภสัชกรวิรุณ เวชศิริ
+        </p>
+        <div class="mt-2 flex justify-center items-center space-x-4">
+            <a href="https://www.pharmconnection.net" target="_blank" rel="noopener noreferrer" class="flex items-center text-sm text-blue-600 hover:underline">
+                <svg class="w-4 h-4 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A11.953 11.953 0 0012 13.5c2.998 0 5.74-1.1 7.843-2.918m-15.686 0A8.959 8.959 0 003 12c0 .778.099 1.533.284 2.253m0 0a11.953 11.953 0 017.843 2.918" />
+                </svg>
+                www.pharmconnection.net
+            </a>
+            <span class="text-gray-400">|</span>
+            <a href="https://www.linkedin.com/in/wirunw/" target="_blank" rel="noopener noreferrer" class="flex items-center text-sm text-blue-600 hover:underline">
+                <svg class="w-4 h-4 mr-1.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor">
+                    <path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 53.79-54.3c29.7 0 53.79 24.2 53.79 54.3a53.79 53.79 0 0 1 -53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/>
+                </svg>
+                LinkedIn
+            </a>
+        </div>
+    </footer>
+
+
+    <script>
+        const detailedScenarios = {
+            'planning': {
+                title: 'การวางแผนเขตการขายและการจัดการลูกค้าก่อนเข้าพบ',
+                objectives: [
+                    { id: 'obj_plan_1', text: 'เพื่อวางแผนการเข้าพบลูกค้า (แพทย์/โรงพยาบาล) ให้มีประสิทธิภาพสูงสุด' },
+                    { id: 'obj_plan_2', text: 'เพื่อทำความเข้าใจลูกค้าเป้าหมายเชิงลึก และตั้งวัตถุประสงค์การเข้าพบที่ชัดเจน' },
+                    { id: 'obj_plan_3', text: 'เพื่อเตรียมข้อมูลและสื่อสนับสนุนการขายให้พร้อมและทันสมัยที่สุด' }
+                ],
+                challenges: [
+                    { id: 'chal_plan_1', text: 'การวางแผนเส้นทางไม่มีประสิทธิภาพ ทำให้เสียเวลาเดินทาง' },
+                    { id: 'chal_plan_2', text: 'ฐานข้อมูลลูกค้าไม่สมบูรณ์ ทำให้ประเมินศักยภาพลูกค้าได้ยาก' },
+                    { id: 'chal_plan_3', text: 'ข้อมูลเกี่ยวกับแพทย์กระจัดกระจาย ไม่ได้รวมอยู่ในที่เดียว' },
+                    { id: 'chal_plan_4', text: 'การจัดการสื่อส่งเสริมการขายที่เป็นกระดาษทำได้ลำบาก และเสี่ยงใช้เวอร์ชันเก่า' }
+                ],
+                solutions: [
+                    { id: 'sol_plan_1', text: 'ได้รับแผนการเดินทางที่เหมาะสมที่สุดสำหรับแต่ละวัน โดยพิจารณาจากลำดับความสำคัญของลูกค้า' },
+                    { id: 'sol_plan_2', text: 'ได้รับโครงสร้างและหัวข้อคำถามสำหรับสร้างโปรไฟล์ลูกค้าแบบ 360 องศา' },
+                    { id: 'sol_plan_3', text: 'ได้รับคำแนะนำในการจัดระเบียบและโครงสร้างของคลังข้อมูลกลางสำหรับสื่อการขายดิจิทัล' }
+                ]
+            },
+            'engagement': {
+                title: 'การนำเสนอข้อมูลผลิตภัณฑ์และการจัดการข้อโต้แย้ง',
+                objectives: [
+                    { id: 'obj_eng_1', text: 'เพื่อเข้าถึงและสร้างปฏิสัมพันธ์กับแพทย์ได้อย่างมีประสิทธิภาพในเวลาที่จำกัด' },
+                    { id: 'obj_eng_2', text: 'เพื่อนำเสนอข้อมูลยาได้น่าสนใจและตอบข้อโต้แย้งได้อย่างมืออาชีพ' },
+                    { id: 'obj_eng_3', text: 'เพื่อจัดการยาตัวอย่างและกิจกรรมส่งเสริมการขายอย่างถูกต้องตามระเบียบ' }
+                ],
+                challenges: [
+                    { id: 'chal_eng_1', text: 'มีเวลาคุยกับแพทย์น้อยมาก และมีการแข่งขันจากบริษัทอื่นสูง' },
+                    { id: 'chal_eng_2', text: 'แพทย์มีความกังขา หรือพึงพอใจกับยาที่ใช้อยู่เดิม' },
+                    { id: 'chal_eng_3', text: 'ไม่สามารถตอบข้อโต้แย้งด้วยข้อมูลสนับสนุนที่น่าเชื่อถือได้ทันที' },
+                    { id: 'chal_eng_4', text: 'การติดตามสต็อกและบันทึกการแจกจ่ายยาตัวอย่างด้วยมือมีความเสี่ยงที่จะผิดพลาด' }
+                ],
+                solutions: [
+                    { id: 'sol_eng_1', text: 'ได้รับไอเดียและสคริปต์สำหรับนำเสนอข้อมูลแบบ Interactive (e-Detailing) ที่น่าสนใจ' },
+                    { id: 'sol_eng_2', text: 'ได้รับชุดคำตอบสำหรับข้อโต้แย้งที่พบบ่อย พร้อมข้อมูลสนับสนุนที่น่าเชื่อถือ' },
+                    { id: 'sol_eng_3', text: 'ได้รับแนวทางและรายการคุณสมบัติ (feature list) ที่จำเป็นสำหรับวางแผนพัฒนาระบบจัดการยาตัวอย่าง' }
+                ]
+            },
+            'reporting': {
+                title: 'การบันทึกข้อมูลและรายงานหลังการเข้าพบ',
+                objectives: [
+                    { id: 'obj_rep_1', text: 'เพื่อบันทึกผลการเข้าพบในระบบ CRM ได้อย่างรวดเร็วและแม่นยำ' },
+                    { id: 'obj_rep_2', text: 'เพื่อลดภาระงานเอกสาร และทำให้ข้อมูลพร้อมใช้งานทันที' },
+                    { id: 'obj_rep_3', text: 'เพื่อประสานงานภายใน (การสั่งซื้อ, การจัดส่ง) ได้อย่างราบรื่น' }
+                ],
+                challenges: [
+                    { id: 'chal_rep_1', text: 'การป้อนข้อมูลด้วยมือหลังเลิกงานใช้เวลานานและข้อมูลอาจคลาดเคลื่อน' },
+                    { id: 'chal_rep_2', text: 'รายงานที่ได้มักเป็นอัตวิสัย ขาดข้อมูลเชิงลึกที่เป็นกลาง' },
+                    { id: 'chal_rep_3', text: 'การสื่อสารระหว่างฝ่ายขาย, โลจิสติกส์, และการเงินไม่มีประสิทธิภาพ' }
+                ],
+                solutions: [
+                    { id: 'sol_rep_1', text: 'ได้รับเทมเพลตโครงสร้างการบันทึกข้อมูลหลังการเข้าพบ เพื่อให้กระชับและครบถ้วน' },
+                    { id: 'sol_rep_2', text: 'สามารถใช้ AI ช่วยสรุปและวิเคราะห์บทสนทนา (จาก transcript) เพื่อหาประเด็นสำคัญและ insight' },
+                    { id: 'sol_rep_3', text: 'ได้รับคำแนะนำเกี่ยวกับขั้นตอนและข้อมูลที่ต้องเตรียมเพื่อวางแผนเชื่อมต่อระบบ CRM/ERP' }
+                ]
+            },
+             'ptc': {
+                title: 'การบริหารจัดการกระบวนการนำยาเข้าบัญชี รพ. (PTC)',
+                objectives: [
+                    { id: 'obj_ptc_1', text: 'เพื่อบริหารกระบวนการนำยาเข้าบัญชีโรงพยาบาล (PTC) อย่างเป็นระบบ' },
+                    { id: 'obj_ptc_2', text: 'เพื่อระบุและสร้างความสัมพันธ์กับผู้มีอำจตัดสินใจหลักในคณะกรรมการ PTC' },
+                    { id: 'obj_ptc_3', text: 'เพื่อให้ข้อมูลสนับสนุนที่เหมาะสมกับผู้มีส่วนได้ส่วนเสียแต่ละกลุ่ม' }
+                ],
+                challenges: [
+                    { id: 'chal_ptc_1', text: 'กระบวนการอนุมัติยาวนานและซับซ้อน มีผู้เกี่ยวข้องหลายคน' },
+                    { id: 'chal_ptc_2', text: 'ติดตามสถานะการมีปฏิสัมพันธ์กับกรรมการแต่ละท่านได้ยาก' },
+                    { id: 'chal_ptc_3', text: 'กรรมการแต่ละท่าน (แพทย์, เภสัชกร, ผู้บริหาร) ต้องการข้อมูลคนละประเภท' }
+                ],
+                solutions: [
+                    { id: 'sol_ptc_1', text: 'ได้รับตาราง Stakeholder Mapping ที่ระบุบทบาท, ความสนใจ, และแนวทางการเข้าถึงกรรมการ PTC แต่ละท่าน' },
+                    { id: 'sol_ptc_2', text: 'ได้รับแผนปฏิบัติการ (Action Plan) สำหรับติดตามกระบวนการอนุมัติยาในแต่ละขั้นตอน' },
+                    { id: 'sol_ptc_3', text: 'ได้รับแผนการนำเสนอข้อมูลที่ปรับให้เหมาะสมกับกรรมการแต่ละตำแหน่ง (แพทย์, เภสัชกร, ผู้บริหาร)' }
+                ]
+            },
+            'quotation': {
+                title: 'การจัดทำใบเสนอราคา (Quotation)',
+                objectives: [
+                    { id: 'obj_quote_1', text: 'เพื่อสร้างใบเสนอราคาที่ถูกต้อง ครบถ้วน และเป็นมืออาชีพ' },
+                    { id: 'obj_quote_2', text: 'เพื่อคำนวณราคาสุทธิ ส่วนลด และเงื่อนไขต่างๆ ได้อย่างแม่นยำ' },
+                    { id: 'obj_quote_3', text: 'เพื่อลดเวลาในการจัดทำเอกสาร และส่งให้ลูกค้าได้รวดเร็วยิ่งขึ้น' }
+                ],
+                challenges: [
+                    { id: 'chal_quote_1', text: 'ไม่แน่ใจว่าต้องใส่ข้อมูลอะไรบ้างในใบเสนอราคาให้ครบถ้วน' },
+                    { id: 'chal_quote_2', text: 'การคำนวณส่วนลดซับซ้อน หรือเงื่อนไขราคาเปลี่ยนแปลงบ่อย' },
+                    { id: 'chal_quote_3', text: 'ใช้เวลาจัดทำเอกสารนาน ทำให้เสียโอกาสในการขาย' }
+                ],
+                solutions: [
+                    { id: 'sol_quote_1', text: 'ได้รับร่างใบเสนอราคาฉบับสมบูรณ์ในรูปแบบที่เป็นมาตรฐาน พร้อมหัวข้อที่จำเป็นครบถ้วน' },
+                    { id: 'sol_quote_2', text: 'ได้รับข้อความอธิบายเงื่อนไขการชำระเงินและการจัดส่งที่เป็นทางการ' },
+                    { id: 'sol_quote_3', text: 'ได้รับอีเมลสำหรับส่งใบเสนอราคาให้ลูกค้าอย่างเป็นมืออาชีพ' }
+                ]
+            },
+            'formulary_letter': {
+                title: 'การเขียนจดหมายเสนอยาเข้าโรงพยาบาล',
+                objectives: [
+                    { id: 'obj_form_1', text: 'เพื่อเขียนจดหมายเสนอยาเข้าบัญชียาโรงพยาบาลได้อย่างน่าเชื่อถือและโน้มน้าวใจ' },
+                    { id: 'obj_form_2', text: 'เพื่อนำเสนอข้อมูลสำคัญของยา (ประสิทธิภาพ, ความปลอดภัย, ความคุ้มค่า) ได้อย่างครบถ้วน' },
+                    { id: 'obj_form_3', text: 'เพื่อใช้ภาษาที่เป็นทางการและเหมาะสมกับคณะกรรมการ PTC' }
+                ],
+                challenges: [
+                    { id: 'chal_form_1', text: 'ไม่ทราบโครงสร้างและองค์ประกอบที่สำคัญของจดหมายเสนอยา' },
+                    { id: 'chal_form_2', text: 'เรียบเรียงข้อมูลทางคลินิกและเศรษฐศาสตร์ให้กระชับและเข้าใจง่ายได้ยาก' },
+                    { id: 'chal_form_3', text: 'กังวลเรื่องการใช้ภาษาและถ้อยคำที่ไม่เป็นทางการหรือไม่เหมาะสม' }
+                ],
+                solutions: [
+                    { id: 'sol_form_1', text: 'ได้รับร่างจดหมายเสนอยาฉบับสมบูรณ์ตามโครงสร้างมาตรฐาน' },
+                    { id: 'sol_form_2', text: 'ได้รับแนวทางการสรุปข้อมูลสำคัญจากงานวิจัยเพื่อนำมาใช้ในจดหมาย' },
+                    { id: 'sol_form_3', text: 'ได้รับตัวอย่างประโยคและสำนวนที่เหมาะสมสำหรับใช้ในการเขียน' }
+                ]
+            },
+            'expense_report': {
+                title: 'การสรุปและเบิกค่าใช้จ่าย (Expense Report)',
+                objectives: [
+                    { id: 'obj_exp_1', text: 'เพื่อสรุปรายการค่าใช้จ่ายให้อยู่ในรูปแบบตารางตามข้อกำหนดของบริษัท' },
+                    { id: 'obj_exp_2', text: 'เพื่อลดความผิดพลาดในการกรอกข้อมูลและคำนวณตัวเลข' },
+                    { id: 'obj_exp_3', text: 'เพื่อจัดทำรายงานเบิกค่าใช้จ่ายได้อย่างรวดเร็วและถูกต้อง' }
+                ],
+                challenges: [
+                    { id: 'chal_exp_1', text: 'ข้อมูลบิลและใบเสร็จกระจัดกระจาย ทำให้รวบรวมได้ยาก' },
+                    { id: 'chal_exp_2', text: 'รูปแบบตารางของบริษัทมีความซับซ้อนและต้องกรอกข้อมูลหลายอย่าง' },
+                    { id: 'chal_exp_3', text: 'เสียเวลากับงานเอกสาร ทำให้มีเวลากับงานขายน้อยลง' }
+                ],
+                solutions: [
+                    { id: 'sol_exp_1', text: 'ได้รับตารางสรุปค่าใช้จ่ายที่จัดรูปแบบเรียบร้อยแล้ว โดย AI จะช่วยจัดข้อมูลที่ป้อนให้ลงในตาราง' },
+                    { id: 'sol_exp_2', text: 'ได้รับคำแนะนำเกี่ยวกับประเภทของค่าใช้จ่ายที่สามารถเบิกได้ตามนโยบาย (หากระบุ)' },
+                    { id: 'sol_exp_3', text: 'ได้รับร่างอีเมลสำหรับส่งรายงานเบิกค่าใช้จ่ายให้ฝ่ายบุคคล/การเงิน' }
+                ]
+            },
+            'dashboard_design': {
+                title: 'การออกแบบ Dashboard เพื่อติดตามผลงาน',
+                objectives: [
+                    { id: 'obj_dash_1', text: 'เพื่อออกแบบ Dashboard สำหรับติดตามผลการปฏิบัติงานของตนเอง' },
+                    { id: 'obj_dash_2', text: 'เพื่อกำหนดตัวชี้วัด (KPIs) ที่สำคัญและสอดคล้องกับเป้าหมาย' },
+                    { id: 'obj_dash_3', text: 'เพื่อให้เห็นภาพรวมของข้อมูลและหา Insight สำหรับการพัฒนาการทำงาน' }
+                ],
+                challenges: [
+                    { id: 'chal_dash_1', text: 'ไม่รู้ว่าควรจะติดตามข้อมูลอะไรบ้าง และจะวัดผลอย่างไร' },
+                    { id: 'chal_dash_2', text: 'ไม่สามารถนำเสนอข้อมูลในรูปแบบที่เข้าใจง่ายและเห็นภาพรวมได้' },
+                    { id: 'chal_dash_3', text: 'ข้อมูลการขายและการเข้าพบถูกบันทึกไว้หลายที่ ทำให้มองไม่เห็นภาพรวม' }
+                ],
+                solutions: [
+                    { id: 'sol_dash_1', text: 'ได้รับโครงสร้างและแผนผังของ Dashboard ที่เหมาะสมกับผู้แทนยา' },
+                    { id: 'sol_dash_2', text: 'ได้รับคำแนะนำเกี่ยวกับ KPIs ที่ควรติดตาม (ทั้งด้านกิจกรรมและผลลัพธ์) และวิธีการคำนวณ' },
+                    { id: 'sol_dash_3', text: 'ได้รับตัวอย่างการออกแบบกราฟและตารางเพื่อนำเสนอข้อมูลแต่ละส่วนให้น่าสนใจ' }
+                ]
+            },
+             'sfe': {
+                title: 'การวัดผลและพัฒนาประสิทธิภาพของทีมขาย (มุมมองผู้จัดการ)',
+                objectives: [
+                    { id: 'obj_sfe_1', text: 'เพื่อติดตามและวัดผลประสิทธิภาพของทีม โดยใช้ข้อมูลที่หลากหลายกว่ายอดขาย' },
+                    { id: 'obj_sfe_2', text: 'เพื่อระบุจุดแข็งและโอกาสในการพัฒนาของผู้แทนยาแต่ละคน' },
+                    { id: 'obj_sfe_3', text: 'เพื่อให้คำแนะนำ (Coaching) แก่ทีมได้อย่างตรงจุดและมีข้อมูลสนับสนุน' }
+                ],
+                challenges: [
+                    { id: 'chal_sfe_1', text: 'การดูแค่ยอดขายทำให้ไม่เห็นปัญหาระหว่างทาง เช่น คุณภาพการเข้าพบ' },
+                    { id: 'chal_sfe_2', text: 'ไม่สามารถเปรียบเทียบประสิทธิภาพของทีมได้อย่างเป็นธรรม' },
+                    { id: 'chal_sfe_3', text: 'ขาดข้อมูลเชิงลึกเพื่อใช้ในการให้คำแนะนำและพัฒนาทีม' }
+                ],
+                solutions: [
+                    { id: 'sol_sfe_1', text: 'ได้รับคำแนะนำเกี่ยวกับ KPI ที่ควรมีใน Dashboard และโครงสร้างการแสดงผลข้อมูลเพื่อการวิเคราะห์' },
+                    { id: 'sol_sfe_2', text: 'สามารถใช้ AI ช่วยวิเคราะห์ข้อมูลผลการปฏิบัติงาน (Performance Data) เพื่อหาแนวทางในการ Coaching ทีม' },
+                    { id: 'sol_sfe_3', text: 'ได้รับกรอบการทำงาน (Framework) สำหรับการตั้งเป้าหมายและประเมินผลที่สมดุล (Balanced Scorecard)' }
+                ]
+            }
+        };
+
+        const scenarioSelect = document.getElementById('scenario-select');
+        const dynamicChoicesContainer = document.getElementById('dynamic-choices-container');
+        const generateBtn = document.getElementById('generate-btn');
+        const resultContainer = document.getElementById('result-container');
+        const resultPrompt = document.getElementById('result-prompt');
+        const copyBtn = document.getElementById('copy-btn');
+        const copyFeedback = document.getElementById('copy-feedback');
+        
+        scenarioSelect.addEventListener('change', (e) => {
+            const scenarioId = e.target.value;
+            populateChoices(scenarioId);
+        });
+
+        document.getElementById('doctor-specialty').addEventListener('change', e => {
+            document.getElementById('doctor-specialty-other').classList.toggle('hidden', e.target.value !== 'other_specialty');
+        });
+
+        function renderCheckboxes(containerId, title, items, name) {
+            const container = document.getElementById(containerId);
+            if (!items || items.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+            // Update the title for the dynamic sections
+            let stepNumber;
+            if(name === 'objectives') stepNumber = 3;
+            if(name === 'challenges') stepNumber = 4;
+            if(name === 'solutions') stepNumber = 5;
+
+            const itemsHTML = items.map(item => `
+                <div class="checkbox-item">
+                    <input type="checkbox" id="${item.id}" name="${name}" value="${item.text}">
+                    <label for="${item.id}">${item.text}</label>
+                </div>
+            `).join('');
+
+            const otherHTML = `
+                <div class="checkbox-item mt-4 border-t pt-4 border-gray-200">
+                    <input type="checkbox" id="${name}-other-checkbox">
+                    <label for="${name}-other-checkbox" class="font-medium">อื่นๆ (ระบุเอง)</label>
+                </div>
+                <textarea id="${name}-other-text" class="form-control mt-2 hidden" placeholder="กรุณาระบุรายละเอียด..."></textarea>
+            `;
+
+            container.innerHTML = `
+                <fieldset class="form-group">
+                    <legend class="fieldset-label">${stepNumber}. ${title}:</legend>
+                    <div class="checkbox-group">${itemsHTML}${otherHTML}</div>
+                </fieldset>
+            `;
+        }
+        
+        function populateChoices(scenarioId) {
+            if (!scenarioId) {
+                dynamicChoicesContainer.classList.add('hidden');
+                generateBtn.classList.add('hidden');
+                resultContainer.classList.add('hidden');
+                return;
+            }
+            
+            // Adjust label for additional info based on selection
+            const additionalInfoLabel = document.querySelector('label[for="additional-info"]');
+            additionalInfoLabel.textContent = `6. ระบุข้อมูลหรือคำขอเพิ่มเติมที่ต้องการจาก AI:`;
+
+
+            const data = detailedScenarios[scenarioId];
+            renderCheckboxes('objectives-container', 'เลือกวัตถุประสงค์ (เลือกได้มากกว่า 1 ข้อ)', data.objectives, 'objectives');
+            renderCheckboxes('challenges-container', 'เลือกสถานการณ์/ความท้าทาย (เลือกได้มากกว่า 1 ข้อ)', data.challenges, 'challenges');
+            renderCheckboxes('solutions-container', 'เลือกผลลัพธ์ที่คาดหวัง (เลือกได้มากกว่า 1 ข้อ)', data.solutions, 'solutions');
+            
+            ['objectives', 'challenges', 'solutions'].forEach(name => {
+                const checkbox = document.getElementById(`${name}-other-checkbox`);
+                const textarea = document.getElementById(`${name}-other-text`);
+                if (checkbox) {
+                    checkbox.addEventListener('change', () => {
+                        textarea.classList.toggle('hidden', !checkbox.checked);
+                    });
+                }
+            });
+
+            dynamicChoicesContainer.classList.remove('hidden');
+            generateBtn.classList.remove('hidden');
+            resultContainer.classList.add('hidden');
+        }
+        
+        function getCombinedCheckedValues(name) {
+            const checkedInputs = document.querySelectorAll(`input[name="${name}"]:checked`);
+            let values = Array.from(checkedInputs).map(cb => cb.value);
+
+            const otherCheckbox = document.getElementById(`${name}-other-checkbox`);
+            if (otherCheckbox && otherCheckbox.checked) {
+                const otherText = document.getElementById(`${name}-other-text`).value.trim();
+                if (otherText) {
+                    values.push(otherText);
+                }
+            }
+            return values;
+        }
+
+        function getDefaultRequest(scenarioId, doctorSpecialty, competitorDrug) {
+            switch(scenarioId) {
+                case 'quotation':
+                    return 'โปรดช่วยสร้างเทมเพลตใบเสนอราคาที่เป็นมืออาชีพตามข้อมูลที่ให้มา โดยใส่หัวข้อที่จำเป็นให้ครบถ้วน เช่น ข้อมูลลูกค้า, รายการสินค้า, ราคา, เงื่อนไขการชำระเงิน/การจัดส่ง และร่างอีเมลสำหรับส่งให้ลูกค้า';
+                case 'formulary_letter':
+                    return 'โปรดช่วยร่างจดหมายเสนอยาเข้าโรงพยาบาลถึงคณะกรรมการ PTC ให้มีความน่าเชื่อถือและโน้มน้าวใจ โดยนำเสนอประโยชน์สำคัญของยาอย่างชัดเจน และมีโครงสร้างที่เป็นทางการ';
+                case 'expense_report':
+                    return 'โปรดช่วยจัดระเบียบข้อมูลค่าใช้จ่ายของฉันให้อยู่ในรูปแบบตารางที่ชัดเจนสำหรับทำรายงานเบิกค่าใช้จ่าย โดยให้มีคอลัมน์ วันที่, รายละเอียด, หมวดหมู่, และจำนวนเงิน พร้อมทั้งร่างอีเมลสั้นๆ สำหรับส่งรายงานนี้';
+                case 'dashboard_design':
+                    return 'โปรดช่วยเสนอแนวทางการออกแบบและโครงสร้างของ Dashboard สำหรับติดตามผลงานส่วนบุคคล แนะนำตัวชี้วัด (KPIs) ที่สำคัญตามวัตถุประสงค์และความท้าทายที่ฉันเลือก และแนะนำรูปแบบกราฟที่เหมาะสมสำหรับแต่ละ KPI';
+                case 'reporting':
+                    return 'โปรดช่วยสร้างเทมเพลตสำหรับรายงานหลังการเข้าพบ (Post-call report) ที่มีโครงสร้างชัดเจน กระชับ แต่ครอบคลุมประเด็นสำคัญ เช่น หัวข้อที่สนทนา, ผลลัพธ์, สิ่งที่ต้องทำต่อ, และข้อมูลคู่แข่งที่ได้รับ';
+                case 'sfe':
+                    return 'ในฐานะผู้จัดการทีมขาย ฉันต้องการความช่วยเหลือในการวิเคราะห์ผลงานของทีม โปรดช่วยสร้างกรอบการทำงานสำหรับรายงานผลการปฏิบัติงานรายเดือนตาม KPI ที่เลือก และช่วยแนะนำคำถามสำคัญที่ควรถามในระหว่างการโค้ชชิ่งทีมงาน';
+                default: // For planning, engagement, ptc
+                    return `Please provide a comprehensive action plan that includes: \n1. A list of key talking points tailored for a ${doctorSpecialty}, addressing the challenges I've selected. \n2. Insightful questions to ask the doctor, especially considering they might be using ${competitorDrug}. \n3. A sample script for handling objections related to the challenges I've selected. \n4. A short, professional follow-up email template that reinforces the key messages.`;
+            }
+        }
+
+
+        generateBtn.addEventListener('click', () => {
+            const getSpecialty = () => {
+                const select = document.getElementById('doctor-specialty');
+                return select.value === 'other_specialty' ? document.getElementById('doctor-specialty-other').value : select.value;
+            };
+
+            const scenarioId = document.getElementById('scenario-select').value;
+            const userName = document.getElementById('user-name').value || '[ยังไม่ได้ระบุชื่อ]';
+            const drugName = document.getElementById('drug-name').value || '[ยังไม่ได้ระบุชื่อยา]';
+            const doctorSpecialty = getSpecialty() || '[ยังไม่ได้ระบุ]';
+            const competitorDrug = document.getElementById('competitor-drug').value || 'ไม่มี';
+
+            const objectives = getCombinedCheckedValues('objectives');
+            const challenges = getCombinedCheckedValues('challenges');
+            const solutions = getCombinedCheckedValues('solutions');
+            const additionalInfo = document.getElementById('additional-info').value;
+
+            const defaultRequest = getDefaultRequest(scenarioId, doctorSpecialty, competitorDrug);
+            const finalRequest = additionalInfo ? `Specifically, I need help with the following: ${additionalInfo}` : defaultRequest;
+
+            const formatList = (title, items) => {
+                if (items.length === 0) return `**${title}:**\n- (ไม่ได้เลือก)`;
+                return `**${title}:**\n- ${items.join('\n- ')}`;
+            };
+
+            const prompt = `
+Act as an expert pharmaceutical sales coach and mentor for a Medical Representative.
+Your task is to provide practical, personalized advice and ready-to-use materials based on the following detailed context.
+
+**Part 1: Specific Context for this Task**
+- My Name: ${userName}
+- My Product: ${drugName}
+- Target Audience (if applicable): ${doctorSpecialty}
+- Key Competitor Product (if applicable): ${competitorDrug}
+
+**Part 2: Situation Analysis (ROSES framework)**
+${formatList('My Objectives', objectives)}
+
+${formatList("Current Scenarios/Challenges I'm facing", challenges)}
+
+${formatList('The Ideal Outcomes (Expected Solutions)', solutions)}
+
+**Part 3: My Specific Request**
+Based on ALL the details provided in Part 1 and 2, please provide me with highly targeted and personalized tools and advice.
+${finalRequest}
+
+Please write the response in Thai, and address me, ${userName}, directly as if you are my personal coach, guiding me to achieve my stated objectives and desired outcomes.
+`.trim();
+
+            resultPrompt.value = prompt;
+            resultContainer.classList.remove('hidden');
+            resultPrompt.style.height = 'auto';
+            resultPrompt.style.height = (resultPrompt.scrollHeight) + 'px';
+        });
+
+        copyBtn.addEventListener('click', () => {
+            resultPrompt.select();
+            try {
+                document.execCommand('copy');
+                copyFeedback.textContent = 'คัดลอกแล้ว!';
+                setTimeout(() => { copyFeedback.textContent = ''; }, 2000);
+            } catch (err) {
+                copyFeedback.textContent = 'ไม่สามารถคัดลอกได้';
+                setTimeout(() => { copyFeedback.textContent = ''; }, 2000);
+            }
+        });
+
+    </script>
+</body>
+</html>
+
