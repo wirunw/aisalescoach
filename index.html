@@ -45,7 +45,6 @@
             cursor: pointer;
             transition: background-color 0.2s;
             border: none;
-            width: 100%;
         }
         .btn:hover {
             background-color: #1D4ED8;
@@ -203,12 +202,10 @@
                 <textarea id="additional-info" class="form-control" placeholder="เช่น 'ช่วยร่างสคริปต์เปิดการสนทนา 3 แบบ', 'เปรียบเทียบยากับคู่แข่งในรูปแบบตาราง'"></textarea>
             </div>
 
-            <!-- Generate Button -->
-            <button id="generate-btn" class="btn hidden mt-4">สร้าง Personalized Prompt</button>
-
-            <!-- AI Coach Button -->
-            <div class="mt-4 text-center">
-                <a href="https://g.co/gemini/share/d87c71e23bf5" target="_blank" class="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
+            <!-- Action Buttons -->
+            <div class="mt-8 flex flex-wrap justify-center items-center gap-4">
+                <button id="generate-btn" class="btn hidden w-auto">สร้าง Personalized Prompt</button>
+                <a href="https://g.co/gemini/share/d87c71e23bf5" target="_blank" class="btn w-auto bg-green-600 hover:bg-green-700">
                     🚀 ขอคำแนะนำจาก AI Coach (Gemini)
                 </a>
             </div>
